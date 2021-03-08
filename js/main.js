@@ -1,5 +1,4 @@
 import Entity from './entity.js';
-import Utils from './utils.js';
 var GameState;
 (function (GameState) {
     GameState[GameState["INITIALIZING"] = 0] = "INITIALIZING";
@@ -16,18 +15,19 @@ class Game {
         this.width = 320;
         this.height = 180;
         this.scale = this.determineScale();
-        this.scaledWidth = this.width * this.scale;
-        this.scaledHeight = this.height * this.scale;
         this.state = GameState.PLAY;
-        this.testEntity = new Entity(0, (this.height / 2 - 8) * this.scale, 16, 16, this.width, this.height, this.scale);
+        this.testEntity = new Entity(0, (this.height / 2 - 8), 16, 16, this.width, this.height);
         this.isRunning = false;
         this.canvas = document.getElementById("canvas");
         this.context2D = this.canvas.getContext('2d');
         this.fpsCounter = document.getElementById("fpsCounter");
     }
     main() {
-        this.canvas.width = this.scaledWidth;
-        this.canvas.height = this.scaledHeight;
+        this.canvas.width = window.innerWidth - 16;
+        this.canvas.height = window.innerHeight - 16;
+        this.context2D.fillStyle = 'black';
+        this.context2D.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        this.context2D.scale(this.scale, this.scale);
         this.run();
     }
     tick() {
@@ -35,28 +35,19 @@ class Game {
     }
     render() {
         this.context2D.fillStyle = 'black';
-        this.context2D.fillRect(0, 0, this.scaledWidth, this.scaledHeight);
+        this.context2D.fillRect(0, 0, this.width, this.height);
         this.testEntity.render(this.context2D);
     }
     run() {
         let self = this;
-        let lastTime = Date.now();
-        let amountOfTicks = 60;
-        let ns = 1000 / amountOfTicks;
-        let delta = 0;
         let frames = 0;
-        let timer = lastTime;
+        let timer = Date.now();
         function loop(now) {
-            delta = (now - lastTime) / ns;
-            lastTime = now;
-            if (delta >= 1) {
-                self.tick();
-                self.render();
-                frames++;
-                delta--;
-            }
+            self.tick();
+            self.render();
+            frames++;
             if (Date.now() - timer > 1000) {
-                self.fpsCounter.innerText = `FPS: ${frames}`;
+                // self.fpsCounter.innerText = `FPS: ${frames}`;
                 frames = 0;
                 timer += 1000;
             }
@@ -68,8 +59,8 @@ class Game {
         window.requestAnimationFrame(loop);
     }
     determineScale() {
-        const browserWidth = Utils.getBrowserWidth();
-        const browserHeight = Utils.getBrowserHeight();
+        const browserWidth = window.innerHeight - 16;
+        const browserHeight = window.innerWidth - 16;
         const scaleWidth = browserWidth / this.width;
         const scaleHeight = browserHeight / this.height;
         let finalScale = (scaleWidth + scaleHeight) / 2;
