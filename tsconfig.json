@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "target": "ES2015",
+        "module": "ES2015",
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "noEmitOnError": true,
+        "outDir": "./js"
+    },
+    "include": ["ts/**/*"],
+    "$schema": "https://json.schemastore.org/tsconfig",
+    "display": "Recommended"
+}
