@@ -20,8 +20,8 @@ export default class World {
     }
     createWorld(map) {
         return __awaiter(this, void 0, void 0, function* () {
-            let floorSprite = yield this.game.spritesheet.getSprite(0, 0, 16, 16);
-            let wallSprite = yield this.game.spritesheet.getSprite(16, 0, 16, 16);
+            let floorSprite = yield this.game.spritesheet.getSprite(32, 48, 16, 16);
+            let wallSprite = yield this.game.spritesheet.getSprite(64, 48, 16, 16);
             this.map.src = map;
             this.map.onload = () => {
                 this.context2D.drawImage(this.map, 0, 0);
@@ -33,6 +33,11 @@ export default class World {
                         switch (Utils.RGBAToHexA(data[0], data[1], data[2], data[3])) {
                             case '#ffffffff':
                                 this.game.tiles.push(new WallTile(j * 16, i * 16, wallSprite));
+                                break;
+                            case '#0b2a83ff':
+                                this.game.player.x = j * 16;
+                                this.game.player.y = i * 16;
+                                this.game.tiles.push(new FloorTile(j * 16, i * 16, floorSprite));
                                 break;
                             default:
                                 this.game.tiles.push(new FloorTile(j * 16, i * 16, floorSprite));

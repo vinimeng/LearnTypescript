@@ -19,8 +19,8 @@ export default class World {
     }
 
     private async createWorld(map: string) {
-        let floorSprite = await this.game.spritesheet.getSprite(0, 0, 16, 16);
-        let wallSprite = await this.game.spritesheet.getSprite(16, 0, 16, 16);
+        let floorSprite = await this.game.spritesheet.getSprite(32, 48, 16, 16);
+        let wallSprite = await this.game.spritesheet.getSprite(64, 48, 16, 16);
         this.map.src = map;
         this.map.onload = () => {
             this.context2D.drawImage(this.map, 0, 0);
@@ -36,6 +36,15 @@ export default class World {
                                 i * 16,
                                 wallSprite
                             ));
+                            break;
+                        case '#0b2a83ff':
+                                this.game.player.x = j*16;
+                                this.game.player.y = i*16;
+                                this.game.tiles.push(new FloorTile(
+                                    j * 16,
+                                    i * 16,
+                                    floorSprite
+                                ));
                             break;
                         default:
                             this.game.tiles.push(new FloorTile(

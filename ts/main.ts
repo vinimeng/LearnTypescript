@@ -1,7 +1,7 @@
 import Entity from './entity.js';
+import Player from './player.js';
 import Spritesheet from './spritesheet.js';
 import Tile from './tile.js';
-import Utils from './utils.js';
 import World from './world.js';
 
 enum GameState {
@@ -24,6 +24,7 @@ export default class Game {
     public spritesheet: Spritesheet;
     public spritesheetLoaded: boolean;
     public world!: World;
+    public player!: Player;
     private isRunning: boolean;
     private appDiv : HTMLDivElement;
     private canvas: HTMLCanvasElement;
@@ -35,7 +36,7 @@ export default class Game {
         this.tiles = [];
         this.spritesheet = new Spritesheet();
         this.spritesheetLoaded = false;
-        this.loadSpritesheet('./img/spritesheet.png');
+        this.loadSpritesheet('./img/0x72_16x16DungeonTileset.v3.png');
 
 
         this.appDiv = document.getElementById("app") as HTMLDivElement;
@@ -147,6 +148,17 @@ export default class Game {
         }
 
         if(this.spritesheetLoaded) {
+            const spritePlayer = await this.spritesheet.getSprite(80, 144, 16, 16);
+            this.player = new Player(
+                0,
+                0,
+                16,
+                16,
+                this.width,
+                this.height,
+                spritePlayer
+            );
+            this.entities.push(this.player);
             this.world = new World('./img/map1.png', this);
         }
     }
