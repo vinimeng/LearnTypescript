@@ -5,6 +5,7 @@ export default class Entity {
     public height: number;
     public gameWidth: number;
     public gameHeight: number;
+    public sprite: ImageBitmap;
 
     constructor(
         x: number, 
@@ -12,7 +13,8 @@ export default class Entity {
         width: number, 
         height: number, 
         gameWidth: number,
-        gameHeight: number
+        gameHeight: number,
+        sprite: ImageBitmap
     ) {
         this.x = x;
         this.y = y;
@@ -20,6 +22,7 @@ export default class Entity {
         this.height = height;
         this.gameWidth = gameWidth;
         this.gameHeight = gameHeight;
+        this.sprite = sprite;
     }
 
     public tick() {
@@ -27,7 +30,6 @@ export default class Entity {
     }
 
     public render(context2D: CanvasRenderingContext2D) {
-        context2D.fillStyle = 'red';
-        context2D.fillRect(this.x, this.y, this.width, this.height);
+        context2D.drawImage(this.sprite, this.x, this.y, this.width, this.height);
     }
 }

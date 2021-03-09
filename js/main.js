@@ -1,4 +1,14 @@
-import Entity from './entity.js';
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+import Spritesheet from './spritesheet.js';
+import World from './world.js';
 var GameState;
 (function (GameState) {
     GameState[GameState["INITIALIZING"] = 0] = "INITIALIZING";
@@ -9,34 +19,43 @@ var GameState;
     GameState[GameState["ENDING"] = 5] = "ENDING";
 })(GameState || (GameState = {}));
 ;
-class Game {
+export default class Game {
     constructor(name) {
+        this.entities = [];
+        this.tiles = [];
+        this.spritesheet = new Spritesheet();
+        this.spritesheetLoaded = false;
+        this.loadSpritesheet('./img/spritesheet.png');
+        this.appDiv = document.getElementById("app");
+        this.canvas = document.getElementById("canvas");
+        this.context2D = this.canvas.getContext('2d');
+        this.fpsCounter = document.getElementById("fpsCounter");
         this.name = name;
         this.width = 320;
         this.height = 180;
         this.scale = this.determineScale();
         this.state = GameState.PLAY;
-        this.testEntity = new Entity(0, (this.height / 2 - 8), 16, 16, this.width, this.height);
         this.isRunning = false;
-        this.canvas = document.getElementById("canvas");
-        this.context2D = this.canvas.getContext('2d');
-        this.fpsCounter = document.getElementById("fpsCounter");
     }
     main() {
-        this.canvas.width = window.innerWidth - 16;
-        this.canvas.height = window.innerHeight - 16;
-        this.context2D.fillStyle = 'black';
-        this.context2D.fillRect(0, 0, this.canvas.width, this.canvas.height);
-        this.context2D.scale(this.scale, this.scale);
-        this.run();
+        return __awaiter(this, void 0, void 0, function* () {
+            this.initializeEvents();
+            this.adjustCanvas();
+            this.run();
+        });
     }
     tick() {
-        this.testEntity.tick();
+        this.entities.forEach((entity, index) => {
+            entity.tick();
+        });
     }
     render() {
-        this.context2D.fillStyle = 'black';
-        this.context2D.fillRect(0, 0, this.width, this.height);
-        this.testEntity.render(this.context2D);
+        this.tiles.forEach((tiles, index) => {
+            tiles.render(this.context2D);
+        });
+        this.entities.forEach((entity, index) => {
+            entity.render(this.context2D);
+        });
     }
     run() {
         let self = this;
@@ -47,7 +66,7 @@ class Game {
             self.render();
             frames++;
             if (Date.now() - timer > 1000) {
-                // self.fpsCounter.innerText = `FPS: ${frames}`;
+                self.fpsCounter.innerText = `FPS: ${frames}`;
                 frames = 0;
                 timer += 1000;
             }
@@ -58,16 +77,56 @@ class Game {
         this.isRunning = true;
         window.requestAnimationFrame(loop);
     }
+    adjustCanvas() {
+        this.canvas.width = this.width * this.scale;
+        this.canvas.height = this.height * this.scale;
+        this.context2D.fillStyle = 'black';
+        this.context2D.fillRect(0, 0, this.width * this.scale, this.height * this.scale);
+        this.context2D.scale(this.scale, this.scale);
+        this.context2D.imageSmoothingEnabled = false;
+    }
     determineScale() {
-        const browserWidth = window.innerHeight - 16;
-        const browserHeight = window.innerWidth - 16;
-        const scaleWidth = browserWidth / this.width;
-        const scaleHeight = browserHeight / this.height;
+        const divWidth = this.appDiv.offsetWidth;
+        const divHeight = this.appDiv.offsetHeight;
+        const scaleWidth = divWidth / this.width;
+        const scaleHeight = divHeight / this.height;
         let finalScale = (scaleWidth + scaleHeight) / 2;
-        finalScale = Math.floor(finalScale) - 1;
-        finalScale = finalScale < 1 ? 1 : finalScale;
+        if (finalScale >= 1) {
+            finalScale = Math.floor(finalScale);
+            if (this.width * finalScale > divWidth
+                || this.height * finalScale > divHeight) {
+                finalScale = finalScale - 1;
+            }
+        }
+        if (finalScale < 1 && finalScale >= 0.75) {
+            finalScale = 0.75;
+        }
+        else if (finalScale < 0.75 && finalScale >= 0.5) {
+            finalScale = 0.5;
+        }
+        else if (finalScale < 0.5) {
+            finalScale = 0.25;
+        }
         return finalScale;
     }
+    initializeEvents() {
+        let self = this;
+        window.addEventListener('resize', function () {
+            self.scale = self.determineScale();
+            self.adjustCanvas();
+        });
+    }
+    loadSpritesheet(img) {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.spritesheetLoaded = (yield this.spritesheet.setSpritesheet(img));
+            if (this.spritesheetLoaded !== true) {
+                this.spritesheetLoaded = false;
+            }
+            if (this.spritesheetLoaded) {
+                this.world = new World('./img/map1.png', this);
+            }
+        });
+    }
 }
-const game = new Game('teste');
+const game = new Game('LearnTypescript');
 game.main();
