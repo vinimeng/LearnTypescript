@@ -88,9 +88,7 @@ export default class Game {
     determineScale() {
         const divWidth = this.appDiv.offsetWidth;
         const divHeight = this.appDiv.offsetHeight;
-        const scaleWidth = divWidth / this.width;
-        const scaleHeight = divHeight / this.height;
-        let finalScale = (scaleWidth + scaleHeight) / 2;
+        let finalScale = divWidth / this.width;
         if (finalScale >= 1) {
             finalScale = Math.floor(finalScale);
             if (this.width * finalScale > divWidth
