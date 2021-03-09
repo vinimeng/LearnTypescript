@@ -1,8 +1,8 @@
-import Entity from './entity.js';
-import Player from './player.js';
-import Spritesheet from './spritesheet.js';
-import Tile from './tile.js';
-import World from './world.js';
+import Entity from './entities/entity.js';
+import Player from './entities/player.js';
+import Spritesheet from './graphics/spritesheet.js';
+import Tile from './world/tile.js';
+import World from './world/world.js';
 
 enum GameState {
     INITIALIZING,
@@ -36,7 +36,7 @@ export default class Game {
         this.tiles = [];
         this.spritesheet = new Spritesheet();
         this.spritesheetLoaded = false;
-        this.loadSpritesheet('./img/0x72_16x16DungeonTileset.v3.png');
+        this.loadSpritesheet('./assets/img/spritesheet.png');
 
 
         this.appDiv = document.getElementById("app") as HTMLDivElement;
@@ -159,7 +159,7 @@ export default class Game {
                 spritePlayer
             );
             this.entities.push(this.player);
-            this.world = new World('./img/map1.png', this);
+            this.world = new World('./assets/img/map1.png', this);
         }
     }
 }

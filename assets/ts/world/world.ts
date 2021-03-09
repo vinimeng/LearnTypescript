@@ -1,6 +1,6 @@
 import FloorTile from './floorTile.js';
-import Game from './main.js';
-import Utils from './utils.js';
+import Game from '../main.js';
+import Utils from '../misc/utils.js';
 import WallTile from './wallTile.js';
 
 export default class World {

@@ -7,9 +7,9 @@
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
         "noEmitOnError": true,
-        "outDir": "./js"
+        "outDir": "./assets/js"
     },
-    "include": ["ts/**/*"],
+    "include": ["assets/ts/**/*"],
     "$schema": "https://json.schemastore.org/tsconfig",
     "display": "Recommended"
 }

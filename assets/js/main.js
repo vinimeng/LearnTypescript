@@ -7,9 +7,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import Player from './player.js';
-import Spritesheet from './spritesheet.js';
-import World from './world.js';
+import Player from './entities/player.js';
+import Spritesheet from './graphics/spritesheet.js';
+import World from './world/world.js';
 var GameState;
 (function (GameState) {
     GameState[GameState["INITIALIZING"] = 0] = "INITIALIZING";
@@ -26,7 +26,7 @@ export default class Game {
         this.tiles = [];
         this.spritesheet = new Spritesheet();
         this.spritesheetLoaded = false;
-        this.loadSpritesheet('./img/0x72_16x16DungeonTileset.v3.png');
+        this.loadSpritesheet('./assets/img/spritesheet.png');
         this.appDiv = document.getElementById("app");
         this.canvas = document.getElementById("canvas");
         this.context2D = this.canvas.getContext('2d');
@@ -125,7 +125,7 @@ export default class Game {
                 const spritePlayer = yield this.spritesheet.getSprite(80, 144, 16, 16);
                 this.player = new Player(0, 0, 16, 16, this.width, this.height, spritePlayer);
                 this.entities.push(this.player);
-                this.world = new World('./img/map1.png', this);
+                this.world = new World('./assets/img/map1.png', this);
             }
         });
     }
