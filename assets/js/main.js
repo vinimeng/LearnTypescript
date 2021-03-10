@@ -27,16 +27,17 @@ export default class Game {
         this.spritesheet = new Spritesheet();
         this.spritesheetLoaded = false;
         this.loadSpritesheet('./assets/img/spritesheet.png');
-        this.appDiv = document.getElementById("app");
-        this.canvas = document.getElementById("canvas");
+        this.appDiv = document.getElementById('app');
+        this.canvas = document.getElementById('canvas');
         this.context2D = this.canvas.getContext('2d');
-        this.fpsCounter = document.getElementById("fpsCounter");
+        this.fpsCounter = document.getElementById('fpsCounter');
         this.name = name;
         this.width = 320;
         this.height = 180;
         this.scale = this.determineScale();
         this.state = GameState.PLAY;
         this.isRunning = false;
+        this.showFrames = true;
     }
     main() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -61,15 +62,17 @@ export default class Game {
     run() {
         let self = this;
         let frames = 0;
-        let timer = Date.now();
+        let last = 0;
         function loop(now) {
             self.tick();
             self.render();
-            frames++;
-            if (Date.now() - timer > 1000) {
-                self.fpsCounter.innerText = `FPS: ${frames}`;
-                frames = 0;
-                timer += 1000;
+            if (self.showFrames) {
+                frames++;
+                if (now - last > 1000) {
+                    self.fpsCounter.innerText = String(frames) + 'fps';
+                    frames = 0;
+                    last = now;
+                }
             }
             if (self.isRunning) {
                 window.requestAnimationFrame(loop);

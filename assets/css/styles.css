@@ -1,6 +1,15 @@
+@font-face {
+    font-family: EquipamentPro;
+    src: url('./../font/EquipmentPro.ttf') format('truetype');
+}
+
 body {
-    background-color: black;
-    font-family: sans-serif;
+    background-color: #120e10;
+    font-family: 'EquipamentPro', sans-serif;
+}
+
+#canvas {
+    border: 5px #2c1e1e solid;
 }
 
 #app {
@@ -13,8 +22,56 @@ body {
 
 #fpsCounter {
     position: fixed;
-    right: 3;
-    bottom: 0;
+    left: 2px;
+    top: 2px;
     z-index: 100;
-    color: chartreuse;
+    color: white;
+    font-size: 14px;
+}
+
+button {
+    background: #2c1e1e;
+    border: none;
+    color: white;
+    font-family: 'EquipamentPro', sans-serif;
+    font-size: 18px;
+}
+
+button:hover {
+    background: #4b2f2f;
+    cursor: pointer;
+}
+
+button:active {
+    background: #754242;
+    cursor: pointer;
+}
+
+a {
+    color: white;
+}
+
+#btnCredits {
+    position: fixed;
+    left: 2px;
+    bottom: 2px;
+    z-index: 100;
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-top: 5px;
+}
+
+#modalCredits {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    background-color: rgb(18, 14, 16, 0.7);
+    border: none;
+    border-radius: 10px;
+    color: white;
+    padding: 20px;
+    font-size: 18px;
+    text-align: center;
+    transform: translate(-50%, -50%);
+    display: none;
 }

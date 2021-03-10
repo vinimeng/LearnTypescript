@@ -26,6 +26,7 @@ export default class Game {
     public world!: World;
     public player!: Player;
     private isRunning: boolean;
+    private showFrames: boolean;
     private appDiv : HTMLDivElement;
     private canvas: HTMLCanvasElement;
     private context2D: CanvasRenderingContext2D;
@@ -39,10 +40,10 @@ export default class Game {
         this.loadSpritesheet('./assets/img/spritesheet.png');
 
 
-        this.appDiv = document.getElementById("app") as HTMLDivElement;
-        this.canvas = document.getElementById("canvas") as HTMLCanvasElement;
+        this.appDiv = document.getElementById('app') as HTMLDivElement;
+        this.canvas = document.getElementById('canvas') as HTMLCanvasElement;
         this.context2D = this.canvas.getContext('2d') as CanvasRenderingContext2D;
-        this.fpsCounter = document.getElementById("fpsCounter") as HTMLSpanElement;
+        this.fpsCounter = document.getElementById('fpsCounter') as HTMLSpanElement;
         
         this.name = name;
         this.width = 320;
@@ -51,6 +52,7 @@ export default class Game {
         this.state = GameState.PLAY;
 
         this.isRunning = false;
+        this.showFrames = true;
     }
 
     public async main() {
@@ -77,17 +79,19 @@ export default class Game {
     private run() {
         let self = this;
         let frames = 0;
-        let timer = Date.now();
+        let last = 0;
 
         function loop(now: number) {
             self.tick();
             self.render();
-            frames++;
             
-            if(Date.now() - timer > 1000) {
-                self.fpsCounter.innerText = `FPS: ${frames}`;
-                frames = 0;
-                timer += 1000;
+            if(self.showFrames) {
+                frames++;
+                if(now - last > 1000) {
+                    self.fpsCounter.innerText = String(frames) + 'fps';
+                    frames = 0;
+                    last = now;
+                }
             }
 
             if(self.isRunning) {
