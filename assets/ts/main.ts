@@ -1,77 +1,68 @@
 import Entity from './entities/entity.js';
 import Player from './entities/player.js';
 import Spritesheet from './graphics/spritesheet.js';
+import { GameState, HEIGHT, WIDTH } from './misc/constants.js';
+import HTML from './misc/html.js';
 import Tile from './world/tile.js';
 import World from './world/world.js';
 
-enum GameState {
-    INITIALIZING,
-    MAINMENU,
-    PLAY,
-    CUTSCENE,
-    PAUSEMENU,
-    ENDING
-};
-
 export default class Game {
-    public name: string;
-    public width: number;
-    public height: number;
+    public static tiles = new Array<Tile>();
+    public static entities = new Array<Entity>();
+    public static player: Player;
+    public spritesheet: Spritesheet;
     public scale: number;
     public state: GameState;
-    public tiles: Array<Tile>;
-    public entities: Array<Entity>;
-    public spritesheet: Spritesheet;
-    public spritesheetLoaded: boolean;
-    public world!: World;
-    public player!: Player;
+    public world: World;
     private isRunning: boolean;
-    private showFrames: boolean;
     private appDiv : HTMLDivElement;
     private canvas: HTMLCanvasElement;
     private context2D: CanvasRenderingContext2D;
-    private fpsCounter: HTMLSpanElement;
+    private html: HTML;
 
-    constructor(name: string) {
-        this.entities = [];
-        this.tiles = [];
+    constructor() {
         this.spritesheet = new Spritesheet();
-        this.spritesheetLoaded = false;
-        this.loadSpritesheet('./assets/img/spritesheet.png');
-
+        this.world = new World();
 
         this.appDiv = document.getElementById('app') as HTMLDivElement;
         this.canvas = document.getElementById('canvas') as HTMLCanvasElement;
         this.context2D = this.canvas.getContext('2d') as CanvasRenderingContext2D;
-        this.fpsCounter = document.getElementById('fpsCounter') as HTMLSpanElement;
+
+        this.html = new HTML();
         
-        this.name = name;
-        this.width = 320;
-        this.height = 180;
         this.scale = this.determineScale();
         this.state = GameState.PLAY;
 
         this.isRunning = false;
-        this.showFrames = true;
     }
 
     public async main() {
+        await this.loadAssets();
+        Game.player = new Player(
+            0,
+            0,
+            16,
+            28,
+            [Spritesheet.arraySprites[Spritesheet.arraySpritesKeys.indexOf('lizard_m_idle_anim_1')]]
+        );
+        Game.entities.push(Game.player);
+        this.world.createWorld('./assets/img/map1.png');
         this.initializeEvents();
         this.adjustCanvas();
         this.run();
     }
 
     private tick() {
-        this.entities.forEach((entity, index) => {
+        Game.entities.forEach((entity, index) => {
             entity.tick();
         });
     }
 
     private render() {
-        this.tiles.forEach((tiles, index) => {
+        Game.tiles.forEach((tiles, index) => {
             tiles.render(this.context2D);
         });
-        this.entities.forEach((entity, index) => {
+        Game.entities.forEach((entity, index) => {
             entity.render(this.context2D);
         });
     }
@@ -85,10 +76,10 @@ export default class Game {
             self.tick();
             self.render();
             
-            if(self.showFrames) {
+            if(self.html.spanFPS.style.display === 'block') {
                 frames++;
                 if(now - last > 1000) {
-                    self.fpsCounter.innerText = String(frames) + 'fps';
+                    self.html.spanFPS.innerText = `${frames}fps`;
                     frames = 0;
                     last = now;
                 }
@@ -104,10 +95,10 @@ export default class Game {
     }
 
     private adjustCanvas() {
-        this.canvas.width = this.width * this.scale;
-        this.canvas.height = this.height * this.scale;
+        this.canvas.width = WIDTH * this.scale;
+        this.canvas.height = HEIGHT * this.scale;
         this.context2D.fillStyle = 'black';
-        this.context2D.fillRect(0, 0, this.width * this.scale, this.height * this.scale);
+        this.context2D.fillRect(0, 0, WIDTH * this.scale, HEIGHT * this.scale);
         this.context2D.scale(this.scale, this.scale);
         this.context2D.imageSmoothingEnabled = false;
     }
@@ -116,12 +107,12 @@ export default class Game {
         const divWidth = this.appDiv.offsetWidth;
         const divHeight = this.appDiv.offsetHeight;
 
-        let finalScale = divWidth / this.width;
+        let finalScale = divWidth / WIDTH;
 
         if(finalScale >= 1) {
             finalScale = Math.floor(finalScale);
-            if(this.width * finalScale > divWidth
-                || this.height * finalScale > divHeight) {
+            if(WIDTH * finalScale > divWidth
+                || HEIGHT * finalScale > divHeight) {
                 finalScale = finalScale - 1;
             }
         } 
@@ -138,35 +129,16 @@ export default class Game {
     }
 
     private initializeEvents() {
-        let self = this;
-        window.addEventListener('resize', function () {
-            self.scale = self.determineScale();
-            self.adjustCanvas();
+        window.addEventListener('resize', () => {
+            this.scale = this.determineScale();
+            this.adjustCanvas();
         });
     }
 
-    private async loadSpritesheet(img: string) {
-        this.spritesheetLoaded = await this.spritesheet.setSpritesheet(img) as boolean;
-        if(this.spritesheetLoaded !== true) {
-            this.spritesheetLoaded = false;
-        }
-
-        if(this.spritesheetLoaded) {
-            const spritePlayer = await this.spritesheet.getSprite(80, 144, 16, 16);
-            this.player = new Player(
-                0,
-                0,
-                16,
-                16,
-                this.width,
-                this.height,
-                spritePlayer
-            );
-            this.entities.push(this.player);
-            this.world = new World('./assets/img/map1.png', this);
-        }
+    private async loadAssets() {
+        await this.spritesheet.loadSprites();
     }
 }
 
-const game = new Game('LearnTypescript');
+const game = new Game();
 game.main();

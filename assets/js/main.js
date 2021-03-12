@@ -9,53 +9,42 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import Player from './entities/player.js';
 import Spritesheet from './graphics/spritesheet.js';
+import { GameState, HEIGHT, WIDTH } from './misc/constants.js';
+import HTML from './misc/html.js';
 import World from './world/world.js';
-var GameState;
-(function (GameState) {
-    GameState[GameState["INITIALIZING"] = 0] = "INITIALIZING";
-    GameState[GameState["MAINMENU"] = 1] = "MAINMENU";
-    GameState[GameState["PLAY"] = 2] = "PLAY";
-    GameState[GameState["CUTSCENE"] = 3] = "CUTSCENE";
-    GameState[GameState["PAUSEMENU"] = 4] = "PAUSEMENU";
-    GameState[GameState["ENDING"] = 5] = "ENDING";
-})(GameState || (GameState = {}));
-;
 export default class Game {
-    constructor(name) {
-        this.entities = [];
-        this.tiles = [];
+    constructor() {
         this.spritesheet = new Spritesheet();
-        this.spritesheetLoaded = false;
-        this.loadSpritesheet('./assets/img/spritesheet.png');
+        this.world = new World();
         this.appDiv = document.getElementById('app');
         this.canvas = document.getElementById('canvas');
         this.context2D = this.canvas.getContext('2d');
-        this.fpsCounter = document.getElementById('fpsCounter');
-        this.name = name;
-        this.width = 320;
-        this.height = 180;
+        this.html = new HTML();
         this.scale = this.determineScale();
         this.state = GameState.PLAY;
         this.isRunning = false;
-        this.showFrames = true;
     }
     main() {
         return __awaiter(this, void 0, void 0, function* () {
+            yield this.loadAssets();
+            Game.player = new Player(0, 0, 16, 28, [Spritesheet.arraySprites[Spritesheet.arraySpritesKeys.indexOf('lizard_m_idle_anim_1')]]);
+            Game.entities.push(Game.player);
+            this.world.createWorld('./assets/img/map1.png');
             this.initializeEvents();
             this.adjustCanvas();
             this.run();
         });
     }
     tick() {
-        this.entities.forEach((entity, index) => {
+        Game.entities.forEach((entity, index) => {
             entity.tick();
         });
     }
     render() {
-        this.tiles.forEach((tiles, index) => {
+        Game.tiles.forEach((tiles, index) => {
             tiles.render(this.context2D);
         });
-        this.entities.forEach((entity, index) => {
+        Game.entities.forEach((entity, index) => {
             entity.render(this.context2D);
         });
     }
@@ -66,10 +55,10 @@ export default class Game {
         function loop(now) {
             self.tick();
             self.render();
-            if (self.showFrames) {
+            if (self.html.spanFPS.style.display === 'block') {
                 frames++;
                 if (now - last > 1000) {
-                    self.fpsCounter.innerText = String(frames) + 'fps';
+                    self.html.spanFPS.innerText = `${frames}fps`;
                     frames = 0;
                     last = now;
                 }
@@ -82,21 +71,21 @@ export default class Game {
         window.requestAnimationFrame(loop);
     }
     adjustCanvas() {
-        this.canvas.width = this.width * this.scale;
-        this.canvas.height = this.height * this.scale;
+        this.canvas.width = WIDTH * this.scale;
+        this.canvas.height = HEIGHT * this.scale;
         this.context2D.fillStyle = 'black';
-        this.context2D.fillRect(0, 0, this.width * this.scale, this.height * this.scale);
+        this.context2D.fillRect(0, 0, WIDTH * this.scale, HEIGHT * this.scale);
         this.context2D.scale(this.scale, this.scale);
         this.context2D.imageSmoothingEnabled = false;
     }
     determineScale() {
         const divWidth = this.appDiv.offsetWidth;
         const divHeight = this.appDiv.offsetHeight;
-        let finalScale = divWidth / this.width;
+        let finalScale = divWidth / WIDTH;
         if (finalScale >= 1) {
             finalScale = Math.floor(finalScale);
-            if (this.width * finalScale > divWidth
-                || this.height * finalScale > divHeight) {
+            if (WIDTH * finalScale > divWidth
+                || HEIGHT * finalScale > divHeight) {
                 finalScale = finalScale - 1;
             }
         }
@@ -112,26 +101,18 @@ export default class Game {
         return finalScale;
     }
     initializeEvents() {
-        let self = this;
-        window.addEventListener('resize', function () {
-            self.scale = self.determineScale();
-            self.adjustCanvas();
+        window.addEventListener('resize', () => {
+            this.scale = this.determineScale();
+            this.adjustCanvas();
         });
     }
-    loadSpritesheet(img) {
+    loadAssets() {
         return __awaiter(this, void 0, void 0, function* () {
-            this.spritesheetLoaded = (yield this.spritesheet.setSpritesheet(img));
-            if (this.spritesheetLoaded !== true) {
-                this.spritesheetLoaded = false;
-            }
-            if (this.spritesheetLoaded) {
-                const spritePlayer = yield this.spritesheet.getSprite(80, 144, 16, 16);
-                this.player = new Player(0, 0, 16, 16, this.width, this.height, spritePlayer);
-                this.entities.push(this.player);
-                this.world = new World('./assets/img/map1.png', this);
-            }
+            yield this.spritesheet.loadSprites();
         });
     }
 }
-const game = new Game('LearnTypescript');
+Game.tiles = new Array();
+Game.entities = new Array();
+const game = new Game();
 game.main();

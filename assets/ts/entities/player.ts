@@ -5,12 +5,10 @@ export default class Player extends Entity{
         x: number, 
         y: number, 
         width: number, 
-        height: number, 
-        gameWidth: number,
-        gameHeight: number,
-        sprite: ImageBitmap
+        height: number,
+        sprite: Array<ImageBitmap>
     ) {
-        super(x, y, width, height, gameWidth, gameHeight, sprite);
+        super(x, y, width, height, sprite);
     }
 
     public tick() {
@@ -18,6 +16,6 @@ export default class Player extends Entity{
     }
 
     public render(context2D: CanvasRenderingContext2D) {
-        context2D.drawImage(this.sprite, this.x, this.y, this.width, this.height);
+        context2D.drawImage(this.sprite[0], this.x, this.y, this.width, this.height);
     }
 }

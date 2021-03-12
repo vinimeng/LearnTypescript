@@ -3,25 +3,19 @@ export default class Entity {
     public y: number;
     public width: number;
     public height: number;
-    public gameWidth: number;
-    public gameHeight: number;
-    public sprite: ImageBitmap;
+    public sprite: Array<ImageBitmap>;
 
     constructor(
         x: number, 
         y: number, 
         width: number, 
-        height: number, 
-        gameWidth: number,
-        gameHeight: number,
-        sprite: ImageBitmap
+        height: number,
+        sprite: Array<ImageBitmap>
     ) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
-        this.gameWidth = gameWidth;
-        this.gameHeight = gameHeight;
         this.sprite = sprite;
     }
 
@@ -30,6 +24,6 @@ export default class Entity {
     }
 
     public render(context2D: CanvasRenderingContext2D) {
-        context2D.drawImage(this.sprite, this.x, this.y, this.width, this.height);
+        context2D.drawImage(this.sprite[0], this.x, this.y, this.width, this.height);
     }
 }

@@ -1,3 +1,5 @@
+import { TILE_SIZE } from "../misc/constants.js";
+
 export default class Tile {
 
     private x: number;
@@ -11,6 +13,6 @@ export default class Tile {
     }
 
     public render(context2D: CanvasRenderingContext2D) {
-        context2D.drawImage(this.sprite, this.x, this.y, 16, 16);
+        context2D.drawImage(this.sprite, this.x, this.y, TILE_SIZE, TILE_SIZE);
     }
 }
