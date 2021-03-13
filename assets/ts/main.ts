@@ -1,10 +1,10 @@
-import Entity from './entities/entity.js';
-import Player from './entities/player.js';
-import Spritesheet from './graphics/spritesheet.js';
-import { GameState, HEIGHT, WIDTH } from './misc/constants.js';
-import HTML from './misc/html.js';
-import Tile from './world/tile.js';
-import World from './world/world.js';
+import Entity from './entities/entity';
+import Player from './entities/player';
+import Spritesheet from './graphics/spritesheet';
+import { GameState, HEIGHT, WIDTH } from './misc/constants';
+import HTML from './misc/html';
+import Tile from './world/tile';
+import World from './world/world';
 
 export default class Game {
     public static tiles = new Array<Tile>();

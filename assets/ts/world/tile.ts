@@ -1,4 +1,4 @@
-import { TILE_SIZE } from "../misc/constants.js";
+import { TILE_SIZE } from "../misc/constants";
 
 export default class Tile {
 

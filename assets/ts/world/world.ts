@@ -1,8 +1,8 @@
-import FloorTile from './floorTile.js';
-import Game from '../main.js';
-import Utils from '../misc/utils.js';
-import WallTile from './wallTile.js';
-import Spritesheet from '../graphics/spritesheet.js';
+import FloorTile from './floorTile';
+import Game from '../main';
+import Utils from '../misc/utils';
+import WallTile from './wallTile';
+import Spritesheet from '../graphics/spritesheet';
 
 export default class World {
     

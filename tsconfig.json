@@ -1,13 +1,12 @@
 {
     "compilerOptions": {
         "target": "ES2015",
-        "module": "ES2015",
+        "module": "commonjs",
         "strict": true,
         "esModuleInterop": true,
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
-        "noEmitOnError": true,
-        "outDir": "./assets/js"
+        "noEmitOnError": true
     },
     "include": ["assets/ts/**/*"],
     "$schema": "https://json.schemastore.org/tsconfig",

@@ -1,5 +1,5 @@
-import { SPRITESHEET } from "../misc/constants.js";
-import { SPRITESCOORD } from "./spritesheet.map.js";
+import { SPRITESHEET } from "../misc/constants";
+import { SPRITESCOORD } from "./spritesheet.cheatsheet";
 
 export default class Spritesheet {
     private spritesheet: HTMLImageElement;
